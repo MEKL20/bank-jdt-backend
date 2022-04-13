@@ -14,12 +14,16 @@ import java.util.Optional;
 @Primary
 @Service
 public class MyUserDetailsService implements UserDetailsService {
-    @Autowired
-    private CustomerRepository customerRepository;
+
+    private final CustomerRepository customerRepository;
+
+    public MyUserDetailsService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Customer> customer = Optional.ofNullable(customerRepository.findByEmail(email));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Customer> customer = Optional.ofNullable(customerRepository.findByUsername(username));
         return customer.map(MyUserDetails::new).get();
     }
 

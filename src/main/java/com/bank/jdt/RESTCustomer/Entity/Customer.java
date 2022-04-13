@@ -1,8 +1,8 @@
 package com.bank.jdt.RESTCustomer.Entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import sun.util.calendar.BaseCalendar;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,10 +13,13 @@ import java.util.Date;
 @Setter
 public class Customer implements Serializable {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
+    @SequenceGenerator(name = "seq", sequenceName = "customer_seq")
+    @ApiModelProperty(hidden = true)
     private long id;
     private long identity_card;
     private String name;
+    private String username;
     private String password;
     private String phone;
     private String email;
@@ -24,7 +27,7 @@ public class Customer implements Serializable {
     private String address;
     @Temporal(TemporalType.DATE)
     private Date datebirth;
-    @Temporal(TemporalType.TIME)
+    @ApiModelProperty(hidden = true)
     private Date created_at;
 
 

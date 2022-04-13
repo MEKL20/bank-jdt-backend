@@ -17,8 +17,8 @@ public class CustomerController {
     CustomerService customerService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginCustomer(String email, String password) throws Exception {
-        return customerService.loginCustomer(email, password);
+    public ResponseEntity<String> loginCustomer(String username, String password) throws Exception {
+        return customerService.loginCustomer(username, password);
     }
 
     @PostMapping("/add")

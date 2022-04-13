@@ -5,7 +5,6 @@ import com.bank.jdt.RESTCustomer.Repository.CustomerRepository;
 import com.bank.jdt.Utils.JwtUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,37 +16,39 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-
 @Service
 public class CustomerService {
 
-    private AuthenticationManager authenticationManager;
-    private JwtUtil jwtUtil;
-    private UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
+    private final CustomerRepository customerRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    CustomerRepository customerRepository;
+    public CustomerService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService, CustomerRepository customerRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.customerRepository = customerRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
-    public ResponseEntity<String> loginCustomer(String email, String password) {
-        Customer customer = customerRepository.findByEmail(email);
+    public ResponseEntity<String> loginCustomer(String username, String password) {
+        Customer customer = customerRepository.findByUsername(username);
         if (customer != null) {
             try {
                 Authentication authentication = authenticationManager
-                        .authenticate(new UsernamePasswordAuthenticationToken(customer.getEmail(), password));
+                        .authenticate(new UsernamePasswordAuthenticationToken(username, password));
                 UserDetails userDetails = userDetailsService
-                        .loadUserByUsername(customer.getEmail());
+                        .loadUserByUsername(username);
 
                 final String jwt = jwtUtil.generateToken(userDetails);
 
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("Customer", customer.getName());
+                jsonObject.put("Customer", customer);
                 jsonObject.put("Token", jwt);
 
-                return new ResponseEntity(jsonObject, HttpStatus.OK);
+                return new ResponseEntity<>(jwt, HttpStatus.OK);
 
             } catch (BadCredentialsException e) {
                 return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
