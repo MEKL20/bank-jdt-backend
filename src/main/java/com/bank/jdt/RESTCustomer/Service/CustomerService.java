@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class CustomerService {
 
@@ -76,5 +79,17 @@ public class CustomerService {
         existingCustomer.setPhone(customer.getPhone());
         existingCustomer.setDatebirth(customer.getDatebirth());
         return customerRepository.save(existingCustomer);
+    }
+
+    public List<Customer> getAllCustomer() {
+        return customerRepository.findAll();
+    }
+
+    public Optional<Customer> getCustomerById(long id){
+        return customerRepository.findById(id);
+    }
+
+    public void deleteCustomerById(long id) {
+        customerRepository.deleteById(id);
     }
 }
