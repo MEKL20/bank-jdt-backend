@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 public class Customer implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
     @SequenceGenerator(name = "seq", sequenceName = "customer_seq")
     @ApiModelProperty(hidden = true)
     private long id;
