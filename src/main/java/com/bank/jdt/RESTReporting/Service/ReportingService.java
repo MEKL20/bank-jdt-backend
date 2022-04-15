@@ -7,53 +7,52 @@ import com.bank.jdt.RESTSaving.Repository.SavingRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class ReportingService {
     private final ReportingRepository reportingRepository;
-    private final SavingRepository savingRepository;
 
-    public ReportingService(ReportingRepository reportingRepository, SavingRepository savingRepository){
+    public ReportingService(ReportingRepository reportingRepository){
         this.reportingRepository=reportingRepository;
-        this.savingRepository=savingRepository;
     }
 
-    public Reporting getReporting(String username){
+    public List<Reporting> getReporting(String username){
         return reportingRepository.findByUsername(username);
     }
 
-    public Reporting reportingWithdraw(Saving saving){
+    public void reportingWithdraw(Saving accountSaving, Saving transaction){
         Reporting reporting = new Reporting();
-        reporting.setCustomerId(saving.getCustomerId());
+        reporting.setCustomerId(accountSaving.getCustomerId());
         reporting.setActivity("Withdraw");
-        reporting.setBalance(saving.getBalance());
+        reporting.setBalance(transaction.getBalance());
         reporting.setAccountType("Saving");
-        reporting.setAccountSaving(saving.getAccountSaving());
+        reporting.setAccountSaving(accountSaving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        return reportingRepository.save(reporting);
+        reportingRepository.save(reporting);
     }
 
-    public Reporting reportingTopup(Saving saving){
+    public void reportingTopup(Saving accountSaving, Saving transaction){
         Reporting reporting = new Reporting();
-        reporting.setCustomerId(saving.getCustomerId());
+        reporting.setCustomerId(accountSaving.getCustomerId());
         reporting.setActivity("TopUp");
-        reporting.setBalance(saving.getBalance());
+        reporting.setBalance(transaction.getBalance());
         reporting.setAccountType("Saving");
-        reporting.setAccountSaving(saving.getAccountSaving());
+        reporting.setAccountSaving(accountSaving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        return reportingRepository.save(reporting);
+        reportingRepository.save(reporting);
     }
 
-    public Reporting reportingTransfer(String username, Saving saving){
+    public void reportingTransfer(Saving accountSaving, Saving transaction){
         Reporting reporting = new Reporting();
-        reporting.setCustomerId(saving.getCustomerId());
+        reporting.setCustomerId(accountSaving.getCustomerId());
         reporting.setActivity("Transfer");
-        reporting.setBalance(saving.getBalance());
+        reporting.setBalance(transaction.getBalance());
         reporting.setAccountType("Saving");
-        reporting.setAccountSaving(savingRepository.findByUsername(username).getAccountSaving());
-        reporting.setAccountDestination(saving.getAccountSaving());
+        reporting.setAccountSaving(accountSaving.getAccountSaving());
+        reporting.setAccountDestination(transaction.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        return reportingRepository.save(reporting);
+        reportingRepository.save(reporting);
     }
 
 }
