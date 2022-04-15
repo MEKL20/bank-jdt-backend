@@ -14,7 +14,7 @@ import java.util.Date;
 public class Saving implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq")
-    @SequenceGenerator(name = "seq", sequenceName = "customer_seq")
+    @SequenceGenerator(name = "seq", sequenceName = "saving_seq")
     @ApiModelProperty(hidden = true)
     private long id;
     @Column(name = "customer_id")
