@@ -1,10 +1,13 @@
 package com.bank.jdt.RESTSaving.Service;
 
+import com.bank.jdt.RESTCustomer.Entity.Customer;
 import com.bank.jdt.RESTSaving.Entity.Saving;
 import com.bank.jdt.RESTSaving.Repository.SavingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
 
 @Service
 public class SavingService {
@@ -12,6 +15,21 @@ public class SavingService {
 
     public SavingService(SavingRepository savingRepository){
         this.savingRepository=savingRepository;
+    }
+
+    public Saving addSaving(Customer customer){
+        Saving saving=new Saving();
+        saving.setCustomerId(customer.getId());
+        saving.setActive(true);
+        while (true){
+            long randomNum = (long) (Math.random()*Math.pow(10,10));
+            if (savingRepository.findByAccountSaving(randomNum) == null){
+                saving.setAccountSaving(randomNum);
+                break;
+            }
+        }
+        saving.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        return savingRepository.save(saving);
     }
 
     public Saving getSaving(long id){
