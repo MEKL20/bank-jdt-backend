@@ -20,7 +20,7 @@ public class Reporting implements Serializable {
     @Column(name = "customer_id")
     private long customerId;
     private String activity;
-    private int amount;
+    private long balance;
     @Column(name = "account_type")
     private String accountType;
     @Column(name = "account_saving")
@@ -35,10 +35,10 @@ public class Reporting implements Serializable {
 
     public Reporting(){}
 
-    public Reporting(long customerId, String activity, int amount, String accountType, long accountSaving, long accountDeposit, long accountDestination){
+    public Reporting(long customerId, String activity, long balance, String accountType, long accountSaving, long accountDeposit, long accountDestination){
         this.customerId=customerId;
         this.activity=activity;
-        this.amount=amount;
+        this.balance=balance;
         this.accountType=accountType;
         this.accountSaving=accountSaving;
         this.accountDeposit=accountDeposit;
