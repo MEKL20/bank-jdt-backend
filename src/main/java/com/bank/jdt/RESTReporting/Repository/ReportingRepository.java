@@ -20,7 +20,8 @@ public interface ReportingRepository extends JpaRepository<Reporting, Long> {
                     "account_destination," +
                     "created_at " +
             "FROM reporting " +
-                    "WHERE customer_id = (SELECT id FROM customer WHERE username = ?1)",
+                    "WHERE customer_id = (SELECT id FROM customer WHERE username = ?1) " +
+                    "ORDER BY created_at DESC",
             nativeQuery = true
     )
     List<Reporting> findByUsername(String username);
