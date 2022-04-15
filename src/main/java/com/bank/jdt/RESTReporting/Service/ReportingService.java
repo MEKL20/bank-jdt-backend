@@ -13,16 +13,16 @@ public class ReportingService {
     private final ReportingRepository reportingRepository;
     private final SavingRepository savingRepository;
 
-    public Reporting getReporting(String username){
-        return reportingRepository.findByUsername(username);
-    }
-
     public ReportingService(ReportingRepository reportingRepository, SavingRepository savingRepository){
         this.reportingRepository=reportingRepository;
         this.savingRepository=savingRepository;
     }
 
-    public void reportingWithdraw(Saving saving){
+    public Reporting getReporting(String username){
+        return reportingRepository.findByUsername(username);
+    }
+
+    public Reporting reportingWithdraw(Saving saving){
         Reporting reporting = new Reporting();
         reporting.setCustomerId(saving.getCustomerId());
         reporting.setActivity("Withdraw");
@@ -30,10 +30,10 @@ public class ReportingService {
         reporting.setAccountType("Saving");
         reporting.setAccountSaving(saving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        reportingRepository.save(reporting);
+        return reportingRepository.save(reporting);
     }
 
-    public void reportingTopup(Saving saving){
+    public Reporting reportingTopup(Saving saving){
         Reporting reporting = new Reporting();
         reporting.setCustomerId(saving.getCustomerId());
         reporting.setActivity("TopUp");
@@ -41,10 +41,10 @@ public class ReportingService {
         reporting.setAccountType("Saving");
         reporting.setAccountSaving(saving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        reportingRepository.save(reporting);
+        return reportingRepository.save(reporting);
     }
 
-    public void reportingTransfer(String username, Saving saving){
+    public Reporting reportingTransfer(String username, Saving saving){
         Reporting reporting = new Reporting();
         reporting.setCustomerId(saving.getCustomerId());
         reporting.setActivity("Transfer");
@@ -53,7 +53,7 @@ public class ReportingService {
         reporting.setAccountSaving(savingRepository.findByUsername(username).getAccountSaving());
         reporting.setAccountDestination(saving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        reportingRepository.save(reporting);
+        return reportingRepository.save(reporting);
     }
 
 }
