@@ -2,11 +2,9 @@ package com.bank.jdt.RESTCustomer.Service;
 
 import com.bank.jdt.RESTCustomer.Entity.Customer;
 import com.bank.jdt.RESTCustomer.Repository.CustomerRepository;
-import com.bank.jdt.RESTSaving.Entity.Saving;
-import com.bank.jdt.RESTSaving.Repository.SavingRepository;
+import com.bank.jdt.RESTSaving.Service.SavingService;
 import com.bank.jdt.Utils.JwtUtil;
 import lombok.SneakyThrows;
-import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,21 +16,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
 
-    //    private static final String USERNAME_VALIDATION = "^[a-zA-Z][a-zA-Z0-9_]{6,19}$";
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
 
@@ -41,17 +33,17 @@ public class CustomerService {
     private final UserDetailsService userDetailsService;
     private final CustomerRepository customerRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final SavingRepository savingRepository;
+    private final SavingService savingService;
 
     Date SEVENTEEN_YEARS_AGO = new Timestamp(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 365 * 17);
 
-    public CustomerService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService, CustomerRepository customerRepository, BCryptPasswordEncoder bCryptPasswordEncoder, SavingRepository savingRepository) {
+    public CustomerService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService, CustomerRepository customerRepository, BCryptPasswordEncoder bCryptPasswordEncoder, SavingService savingService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.customerRepository = customerRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.savingRepository=savingRepository;
+        this.savingService = savingService;
     }
 
     public ResponseEntity<String> loginCustomer(String username, String password) {
@@ -65,9 +57,9 @@ public class CustomerService {
 
                 final String jwt = jwtUtil.generateToken(userDetails);
 
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("Customer", customer);
-                jsonObject.put("Token", jwt);
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("Customer", customer);
+//                jsonObject.put("Token", jwt);
 
                 return new ResponseEntity<>(jwt, HttpStatus.OK);
 
@@ -81,9 +73,6 @@ public class CustomerService {
 
     @SneakyThrows
     public Customer addCustomer(Customer customer) {
-//        if (!customer.getUsername().matches(USERNAME_VALIDATION)) {
-//            throw new Exception("Username " + customer.getUsername() + " doesn't match");
-//        }
 
         if (customerRepository.findByIdentityCard(customer.getIdentityCard()) != null) {
             throw new Exception("Identity Card " + customer.getIdentityCard() + " has already taken");
@@ -105,19 +94,7 @@ public class CustomerService {
         customer.setPassword(encodedPassword);
         customer.setCreated_at(new Timestamp(System.currentTimeMillis()));
         customerRepository.save(customer);
-
-        Saving saving=new Saving();
-        saving.setCustomerId(customer.getId());
-        saving.setActive(true);
-        while (true){
-            long randomNum = (long) (Math.random()*Math.pow(10,10));
-            if (savingRepository.findByAccountSaving(randomNum) == null){
-                saving.setAccountSaving(randomNum);
-                break;
-            }
-        }
-        saving.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        savingRepository.save(saving);
+        savingService.addSaving(customer);
 
         return customer;
     }
