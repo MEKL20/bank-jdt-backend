@@ -5,8 +5,6 @@ import com.bank.jdt.RESTSaving.Service.SavingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/saving")
 public class SavingController {
@@ -17,23 +15,23 @@ public class SavingController {
         this.savingService=savingService;
     }
 
-    @GetMapping("/{id}")
-    public Saving getSaving(@PathVariable long id){
-        return savingService.getSaving(id);
+    @GetMapping("/{username}")
+    public Saving getSaving(@PathVariable String username){
+        return savingService.getSaving(username);
     }
 
-    @PostMapping("/{id}/withdraw")
-    public ResponseEntity savingWithdraw(@PathVariable long id, @RequestBody Saving saving){
-        return savingService.savingWithdraw(id, saving);
+    @PostMapping("/{username}/withdraw")
+    public ResponseEntity savingWithdraw(@PathVariable String username, @RequestBody Saving saving){
+        return savingService.savingWithdraw(username, saving);
     }
 
-    @PostMapping("/{id}/topup")
-    public ResponseEntity savingTopup(@PathVariable long id, @RequestBody Saving saving){
-        return savingService.savingTopup(id, saving);
+    @PostMapping("/{username}/topup")
+    public ResponseEntity savingTopup(@PathVariable String username, @RequestBody Saving saving){
+        return savingService.savingTopup(username, saving);
     }
 
-    @PostMapping("/{id}/transfer")
-    public ResponseEntity savingTransfer(@PathVariable long id, @RequestBody Saving saving){
-        return savingService.savingTransfer(id, saving);
+    @PostMapping("/{username}/transfer")
+    public ResponseEntity savingTransfer(@PathVariable String username, @RequestBody Saving saving){
+        return savingService.savingTransfer(username, saving);
     }
 }
