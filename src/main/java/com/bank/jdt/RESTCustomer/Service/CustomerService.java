@@ -2,6 +2,8 @@ package com.bank.jdt.RESTCustomer.Service;
 
 import com.bank.jdt.RESTCustomer.Entity.Customer;
 import com.bank.jdt.RESTCustomer.Repository.CustomerRepository;
+import com.bank.jdt.RESTSaving.Entity.Saving;
+import com.bank.jdt.RESTSaving.Repository.SavingRepository;
 import com.bank.jdt.Utils.JwtUtil;
 import lombok.SneakyThrows;
 import net.minidev.json.JSONObject;
@@ -39,15 +41,17 @@ public class CustomerService {
     private final UserDetailsService userDetailsService;
     private final CustomerRepository customerRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final SavingRepository savingRepository;
 
     Date SEVENTEEN_YEARS_AGO = new Timestamp(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 365 * 17);
 
-    public CustomerService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService, CustomerRepository customerRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public CustomerService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService, CustomerRepository customerRepository, BCryptPasswordEncoder bCryptPasswordEncoder, SavingRepository savingRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.customerRepository = customerRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.savingRepository=savingRepository;
     }
 
     public ResponseEntity<String> loginCustomer(String username, String password) {
@@ -100,7 +104,22 @@ public class CustomerService {
         String encodedPassword = bCryptPasswordEncoder.encode(customer.getPassword());
         customer.setPassword(encodedPassword);
         customer.setCreated_at(new Timestamp(System.currentTimeMillis()));
-        return customerRepository.save(customer);
+        customerRepository.save(customer);
+
+        Saving saving=new Saving();
+        saving.setCustomerId(customer.getId());
+        saving.setActive(true);
+        while (true){
+            long randomNum = (long) (Math.random()*Math.pow(10,10));
+            if (savingRepository.findByAccountSaving(randomNum) == null){
+                saving.setAccountSaving(randomNum);
+                break;
+            }
+        }
+        saving.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        savingRepository.save(saving);
+
+        return customer;
     }
 
     @SneakyThrows

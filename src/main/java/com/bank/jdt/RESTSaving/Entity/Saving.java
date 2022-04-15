@@ -25,7 +25,8 @@ public class Saving implements Serializable {
     @Column(name = "is_active")
     private boolean isActive;
     @ApiModelProperty(hidden = true)
-    private Date created_at;
+    @Column(name = "created_at")
+    private Date createdAt;
 
     public Saving(){}
 
