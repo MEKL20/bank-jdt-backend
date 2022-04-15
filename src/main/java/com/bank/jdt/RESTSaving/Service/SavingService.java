@@ -50,7 +50,7 @@ public class SavingService {
             }
             accountSaving.setBalance(accountSaving.getBalance() - saving.getBalance());
             savingRepository.save(accountSaving);
-            reportingService.reportingWithdraw(saving);
+            reportingService.reportingWithdraw(accountSaving, saving);
             return new ResponseEntity<>("Withdraw "+saving.getBalance()+" Success", HttpStatus.OK);
         }catch (Exception err){
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_GATEWAY);
@@ -65,7 +65,7 @@ public class SavingService {
             Saving accountSaving = savingRepository.findByUsername(username);
             accountSaving.setBalance(accountSaving.getBalance() + saving.getBalance());
             savingRepository.save(accountSaving);
-            reportingService.reportingTopup(saving);
+            reportingService.reportingTopup(accountSaving, saving);
             return new ResponseEntity<>("TopUp Success",HttpStatus.OK);
         }catch (Exception err){
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_GATEWAY);
@@ -88,7 +88,7 @@ public class SavingService {
             accountSaving.setBalance(accountSaving.getBalance() - saving.getBalance());
             accountDestination.setBalance(accountDestination.getBalance() + saving.getBalance());
             savingRepository.save(accountSaving);
-            reportingService.reportingTransfer(username, saving);
+            reportingService.reportingTransfer(accountSaving, saving);
             return new ResponseEntity<>("Transfer Success", HttpStatus.OK);
         }catch (Exception err){
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_GATEWAY);

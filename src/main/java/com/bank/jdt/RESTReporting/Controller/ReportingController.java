@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/reporting")
 public class ReportingController {
@@ -17,7 +19,7 @@ public class ReportingController {
     }
 
     @GetMapping("/{username}")
-    public Reporting getReporting(@PathVariable String username){
+    public List<Reporting> getReporting(@PathVariable String username){
         return reportingService.getReporting(username);
     }
 }

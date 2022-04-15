@@ -5,13 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ReportingRepository extends JpaRepository<Reporting, Long> {
     @Query(value =
             "SELECT " +
                     "id,customer_id," +
                     "activity," +
-                    "amount," +
+                    "balance," +
                     "account_type," +
                     "account_saving," +
                     "account_deposit," +
@@ -21,5 +23,5 @@ public interface ReportingRepository extends JpaRepository<Reporting, Long> {
                     "WHERE customer_id = (SELECT id FROM customer WHERE username = ?1)",
             nativeQuery = true
     )
-    Reporting findByUsername(String username);
+    List<Reporting> findByUsername(String username);
 }
