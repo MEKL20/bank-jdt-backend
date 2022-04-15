@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -30,7 +31,7 @@ public class Reporting implements Serializable {
     private long accountDestination;
     @ApiModelProperty(hidden = true)
     @Column(name = "created_at")
-    private long createdAt;
+    private Date createdAt;
 
     public Reporting(){}
 
