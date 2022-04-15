@@ -26,7 +26,7 @@ public class ReportingService {
         Reporting reporting = new Reporting();
         reporting.setCustomerId(saving.getCustomerId());
         reporting.setActivity("Withdraw");
-        reporting.setAmount(saving.getBalance());
+        reporting.setBalance(saving.getBalance());
         reporting.setAccountType("Saving");
         reporting.setAccountSaving(saving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -37,7 +37,7 @@ public class ReportingService {
         Reporting reporting = new Reporting();
         reporting.setCustomerId(saving.getCustomerId());
         reporting.setActivity("TopUp");
-        reporting.setAmount(saving.getBalance());
+        reporting.setBalance(saving.getBalance());
         reporting.setAccountType("Saving");
         reporting.setAccountSaving(saving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -48,7 +48,7 @@ public class ReportingService {
         Reporting reporting = new Reporting();
         reporting.setCustomerId(saving.getCustomerId());
         reporting.setActivity("Transfer");
-        reporting.setAmount(saving.getBalance());
+        reporting.setBalance(saving.getBalance());
         reporting.setAccountType("Saving");
         reporting.setAccountSaving(savingRepository.findByUsername(username).getAccountSaving());
         reporting.setAccountDestination(saving.getAccountSaving());
