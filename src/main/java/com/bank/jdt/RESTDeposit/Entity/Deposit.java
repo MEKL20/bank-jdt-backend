@@ -19,8 +19,8 @@ public class Deposit {
     @SequenceGenerator(name = "seq", sequenceName = "deposit_seq")
     @ApiModelProperty(hidden = true)
     private long id;
-    @Column(name = "customer_id")
-    private long customerId;
+    @ManyToOne
+    private Customer customer;
     @Column(name = "account_deposit")
     private long accountDeposit;
     private long balance;
