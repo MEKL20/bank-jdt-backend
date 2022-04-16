@@ -22,7 +22,7 @@ public class DepositController {
     }
 
     @PutMapping("/withdraw/{id}")
-    public Optional<Deposit> withdrawDeposit(@PathVariable("id") long id) {
+    public Deposit withdrawDeposit(@PathVariable("id") long id) {
         return depositService.withdrawDeposit(id);
     }
 
@@ -44,7 +44,7 @@ public class DepositController {
     @DeleteMapping("/delete/{id}")
     public String deleteDeposit(@PathVariable("id") long id) {
         depositService.deleteDeposit(id);
-        return "Customer with id :"+id+" has been deleted";
+        return "Customer with id :" + id + " has been deleted";
     }
 
 }

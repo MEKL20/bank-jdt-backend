@@ -2,6 +2,7 @@ package com.bank.jdt.RESTCustomer.Entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
@@ -31,9 +33,6 @@ public class Customer implements Serializable {
     @ApiModelProperty(hidden = true)
     private Date created_at;
 
-
-    public Customer() {
-    }
 
     public Customer(String name, String password, String phone, String email, String address, Date datebirth) {
         this.name = name;
