@@ -1,5 +1,6 @@
 package com.bank.jdt.RESTDeposit.Entity;
 
+import com.bank.jdt.RESTCustomer.Entity.Customer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,9 @@ public class Deposit {
     @SequenceGenerator(name = "seq", sequenceName = "deposit_seq")
     @ApiModelProperty(hidden = true)
     private long id;
-    @Column(name = "customer_id")
-    private long customerId;
+    @ManyToOne
+//    @Column(name = "customer_id")
+    private Customer customer;
     @Column(name = "account_deposit")
     private long accountDeposit;
     private long balance;
@@ -35,9 +37,9 @@ public class Deposit {
     private Date expiredAt;
 
 
-    public Deposit(long id, long customerId, long accountDeposit, long balance, int period, boolean isActive, Date createdAt, Date expiredAt) {
+    public Deposit(long id, Customer customer, long accountDeposit, long balance, int period, boolean isActive, Date createdAt, Date expiredAt) {
         this.id = id;
-        this.customerId = customerId;
+        this.customer = customer;
         this.accountDeposit = accountDeposit;
         this.balance = balance;
         this.period = period;
