@@ -24,10 +24,11 @@ public class ReportingService {
     public void reportingWithdraw(Saving accountSaving, Saving transaction){
         Reporting reporting = new Reporting();
         reporting.setCustomerId(accountSaving.getCustomerId());
+        reporting.setSource(accountSaving.getAccountSaving());
+        reporting.setDestination(2);
+        reporting.setAmount(transaction.getBalance());
+        reporting.setBalance(accountSaving.getBalance());
         reporting.setActivity("Withdraw");
-        reporting.setBalance(transaction.getBalance());
-        reporting.setAccountType("Saving");
-        reporting.setAccountSaving(accountSaving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         reportingRepository.save(reporting);
     }
@@ -35,24 +36,35 @@ public class ReportingService {
     public void reportingTopup(Saving accountSaving, Saving transaction){
         Reporting reporting = new Reporting();
         reporting.setCustomerId(accountSaving.getCustomerId());
+        reporting.setSource(1);
+        reporting.setDestination(accountSaving.getAccountSaving());
+        reporting.setAmount(transaction.getBalance());
+        reporting.setBalance(accountSaving.getBalance());
         reporting.setActivity("TopUp");
-        reporting.setBalance(transaction.getBalance());
-        reporting.setAccountType("Saving");
-        reporting.setAccountSaving(accountSaving.getAccountSaving());
         reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         reportingRepository.save(reporting);
     }
 
-    public void reportingTransfer(Saving accountSaving, Saving transaction){
-        Reporting reporting = new Reporting();
-        reporting.setCustomerId(accountSaving.getCustomerId());
-        reporting.setActivity("Transfer");
-        reporting.setBalance(transaction.getBalance());
-        reporting.setAccountType("Saving");
-        reporting.setAccountSaving(accountSaving.getAccountSaving());
-        reporting.setAccountDestination(transaction.getAccountSaving());
-        reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        reportingRepository.save(reporting);
+    public void reportingTransfer(Saving source, long amount, Saving destination){
+        Reporting reportingSource = new Reporting();
+        reportingSource.setCustomerId(source.getCustomerId());
+        reportingSource.setSource(source.getAccountSaving());
+        reportingSource.setDestination(destination.getAccountSaving());
+        reportingSource.setAmount(amount);
+        reportingSource.setBalance(source.getBalance());
+        reportingSource.setActivity("Transfer");
+        reportingSource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        reportingRepository.save(reportingSource);
+
+        Reporting reportingDestination = new Reporting();
+        reportingDestination.setCustomerId(destination.getCustomerId());
+        reportingDestination.setSource(source.getAccountSaving());
+        reportingDestination.setDestination(destination.getAccountSaving());
+        reportingDestination.setAmount(amount);
+        reportingDestination.setBalance(destination.getBalance());
+        reportingDestination.setActivity("Transfer");
+        reportingDestination.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        reportingRepository.save(reportingDestination);
     }
 
 }

@@ -51,7 +51,7 @@ public class SavingService {
             accountSaving.setBalance(accountSaving.getBalance() - saving.getBalance());
             savingRepository.save(accountSaving);
             reportingService.reportingWithdraw(accountSaving, saving);
-            return new ResponseEntity<>("Withdraw "+saving.getBalance()+" Success", HttpStatus.OK);
+            return new ResponseEntity<>("Withdraw Success", HttpStatus.OK);
         }catch (Exception err){
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_GATEWAY);
         }
@@ -77,18 +77,19 @@ public class SavingService {
             if (saving.getBalance() < 10000){
                 return new ResponseEntity<>("Minimum Transfer 10,000", HttpStatus.BAD_REQUEST);
             }
-            Saving accountSaving = savingRepository.findByUsername(username);
-            Saving accountDestination = savingRepository.findByAccountSaving(saving.getAccountSaving());
-            if (accountDestination == null) {
+            Saving source = savingRepository.findByUsername(username);
+            Saving destination = savingRepository.findByAccountSaving(saving.getAccountSaving());
+            if (destination == null) {
                 return new ResponseEntity<>("Account Saving Destination Not Found", HttpStatus.BAD_REQUEST);
             }
-            if ((accountSaving.getBalance() - saving.getBalance()) < 0) {
+            if ((source.getBalance() - saving.getBalance()) < 0) {
                 return new ResponseEntity<>("Balance Is Not Enough", HttpStatus.BAD_REQUEST);
             }
-            accountSaving.setBalance(accountSaving.getBalance() - saving.getBalance());
-            accountDestination.setBalance(accountDestination.getBalance() + saving.getBalance());
-            savingRepository.save(accountSaving);
-            reportingService.reportingTransfer(accountSaving, saving);
+            source.setBalance(source.getBalance() - saving.getBalance());
+            savingRepository.save(source);
+            destination.setBalance(destination.getBalance() + saving.getBalance());
+            savingRepository.save(destination);
+            reportingService.reportingTransfer(source, saving.getBalance(), destination);
             return new ResponseEntity<>("Transfer Success", HttpStatus.OK);
         }catch (Exception err){
             return new ResponseEntity<>(err.getMessage(), HttpStatus.BAD_GATEWAY);
