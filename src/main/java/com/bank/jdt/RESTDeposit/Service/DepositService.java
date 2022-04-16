@@ -29,8 +29,13 @@ public class DepositService {
 
     @SneakyThrows
     public Deposit addDeposit(Deposit deposit) {
-        int number = random.nextInt(999999);
-        deposit.setAccountDeposit(Long.parseLong(123+String.format("%06d", number)));
+        long accountDeposit = 0;
+        do {
+            int number = random.nextInt(999999);
+            accountDeposit = Long.parseLong(123 + String.format("%06d", number));
+        } while (depositRepository.findDepositByAccountDeposit(accountDeposit).isPresent());
+
+        deposit.setAccountDeposit(accountDeposit);
         deposit.setCreatedAt(now);
         switch (deposit.getPeriod()) {
             case 3:
@@ -81,11 +86,11 @@ public class DepositService {
     public void depositExpirationChecker() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Deposit> expiredDeposit = depositRepository.findExpiredDeposit(sdf.format(now));
-        for (int i = 0; i < expiredDeposit.size(); i++) {
-            Deposit newDeposit = expiredDeposit.get(i);
+        for (Deposit newDeposit : expiredDeposit) {
             newDeposit.setActive(false);
+            newDeposit.setBalance(0);
             depositRepository.save(newDeposit);
-            System.out.println(expiredDeposit.get(i).getPeriod());
+            System.out.println(newDeposit.getPeriod());
         }
     }
 }
