@@ -29,7 +29,7 @@ public class DepositService {
 
     @SneakyThrows
     public Deposit addDeposit(Deposit deposit) {
-        long accountDeposit = 0;
+        long accountDeposit;
         do {
             int number = random.nextInt(999999);
             accountDeposit = Long.parseLong(123 + String.format("%06d", number));
