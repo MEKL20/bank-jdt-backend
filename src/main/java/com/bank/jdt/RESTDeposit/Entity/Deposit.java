@@ -2,6 +2,7 @@ package com.bank.jdt.RESTDeposit.Entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Deposit {
 
     @Id
@@ -32,9 +34,6 @@ public class Deposit {
     @Column(name = "expired_at")
     private Date expiredAt;
 
-    public Deposit() {
-
-    }
 
     public Deposit(long id, long customerId, long accountDeposit, long balance, int period, boolean isActive, Date createdAt, Date expiredAt) {
         this.id = id;
