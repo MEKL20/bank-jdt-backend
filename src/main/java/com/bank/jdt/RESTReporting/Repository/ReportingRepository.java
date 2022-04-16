@@ -11,13 +11,13 @@ import java.util.List;
 public interface ReportingRepository extends JpaRepository<Reporting, Long> {
     @Query(value =
             "SELECT " +
-                    "id,customer_id," +
-                    "activity," +
+                    "id," +
+                    "customer_id," +
+                    "source," +
+                    "destination," +
+                    "amount," +
                     "balance," +
-                    "account_type," +
-                    "account_saving," +
-                    "account_deposit," +
-                    "account_destination," +
+                    "activity," +
                     "created_at " +
             "FROM reporting " +
                     "WHERE customer_id = (SELECT id FROM customer WHERE username = ?1) " +
