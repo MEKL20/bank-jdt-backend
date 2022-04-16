@@ -19,29 +19,23 @@ public class Reporting implements Serializable {
     private long id;
     @Column(name = "customer_id")
     private long customerId;
-    private String activity;
+    private long source;
+    private long destination;
+    private long amount;
     private long balance;
-    @Column(name = "account_type")
-    private String accountType;
-    @Column(name = "account_saving")
-    private long accountSaving;
-    @Column(name = "account_deposit")
-    private long accountDeposit;
-    @Column(name = "account_destination")
-    private long accountDestination;
+    private String activity;
     @ApiModelProperty(hidden = true)
     @Column(name = "created_at")
     private Date createdAt;
 
     public Reporting(){}
 
-    public Reporting(long customerId, String activity, long balance, String accountType, long accountSaving, long accountDeposit, long accountDestination){
+    public Reporting(long customerId, long source, long destination, long amount, long balance, String activity){
         this.customerId=customerId;
-        this.activity=activity;
+        this.source=source;
+        this.destination=destination;
+        this.amount=amount;
         this.balance=balance;
-        this.accountType=accountType;
-        this.accountSaving=accountSaving;
-        this.accountDeposit=accountDeposit;
-        this.accountDestination=accountDestination;
+        this.activity=activity;
     }
 }
