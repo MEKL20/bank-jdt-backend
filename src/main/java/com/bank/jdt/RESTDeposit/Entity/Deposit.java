@@ -21,7 +21,6 @@ public class Deposit {
     @ApiModelProperty(hidden = true)
     private long id;
     @ManyToOne
-//    @Column(name = "customer_id")
     private Customer customer;
     @Column(name = "account_deposit")
     private long accountDeposit;
