@@ -13,6 +13,8 @@ import java.util.List;
 public class ReportingService {
     private final ReportingRepository reportingRepository;
 
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+
     public ReportingService(ReportingRepository reportingRepository){
         this.reportingRepository=reportingRepository;
     }
@@ -29,7 +31,7 @@ public class ReportingService {
         reporting.setAmount(transaction.getBalance());
         reporting.setBalance(accountSaving.getBalance());
         reporting.setActivity("Withdraw");
-        reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        reporting.setCreatedAt(now);
         reportingRepository.save(reporting);
     }
 
@@ -41,7 +43,7 @@ public class ReportingService {
         reporting.setAmount(transaction.getBalance());
         reporting.setBalance(accountSaving.getBalance());
         reporting.setActivity("TopUp");
-        reporting.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        reporting.setCreatedAt(now);
         reportingRepository.save(reporting);
     }
 
@@ -53,7 +55,7 @@ public class ReportingService {
         reportingSource.setAmount(amount);
         reportingSource.setBalance(source.getBalance());
         reportingSource.setActivity("Transfer");
-        reportingSource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        reportingSource.setCreatedAt(now);
         reportingRepository.save(reportingSource);
 
         Reporting reportingDestination = new Reporting();
@@ -63,7 +65,7 @@ public class ReportingService {
         reportingDestination.setAmount(amount);
         reportingDestination.setBalance(destination.getBalance());
         reportingDestination.setActivity("Transfer");
-        reportingDestination.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        reportingDestination.setCreatedAt(now);
         reportingRepository.save(reportingDestination);
     }
 
