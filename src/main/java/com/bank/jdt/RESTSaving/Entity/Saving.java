@@ -1,5 +1,6 @@
 package com.bank.jdt.RESTSaving.Entity;
 
+import com.bank.jdt.RESTCustomer.Entity.Customer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +18,8 @@ public class Saving implements Serializable {
     @SequenceGenerator(name = "seq", sequenceName = "saving_seq")
     @ApiModelProperty(hidden = true)
     private long id;
-    @Column(name = "customer_id")
-    private long customerId;
+    @OneToOne
+    private Customer customer;
     @Column(name = "account_saving")
     private long accountSaving;
     private long balance;
@@ -30,8 +31,8 @@ public class Saving implements Serializable {
 
     public Saving(){}
 
-    public Saving(long customerId, long accountSaving, int balance, boolean isActive){
-        this.customerId=customerId;
+    public Saving(Customer customer, long accountSaving, int balance, boolean isActive){
+        this.customer=customer;
         this.accountSaving=accountSaving;
         this.balance=balance;
         this.isActive=isActive;

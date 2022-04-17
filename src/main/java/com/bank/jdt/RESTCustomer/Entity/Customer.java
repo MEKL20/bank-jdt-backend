@@ -17,7 +17,7 @@ public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
     @SequenceGenerator(name = "seq", sequenceName = "customer_seq")
-    @ApiModelProperty(hidden = true)
+//    @ApiModelProperty(hidden = true)
     private long id;
     @Column(name = "identity_card")
     private long identityCard;

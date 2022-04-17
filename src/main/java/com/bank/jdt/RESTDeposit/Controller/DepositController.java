@@ -22,7 +22,7 @@ public class DepositController {
     }
 
     @PutMapping("/withdraw/{id}")
-    public Deposit withdrawDeposit(@PathVariable("id") long id) {
+    public String withdrawDeposit(@PathVariable("id") long id) {
         return depositService.withdrawDeposit(id);
     }
 
