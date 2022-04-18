@@ -22,7 +22,7 @@ public class SavingService {
 
     public Saving addSaving(Customer customer){
         Saving saving=new Saving();
-        saving.setCustomerId(customer.getId());
+        saving.setCustomer(customer);
         saving.setActive(true);
         while (true){
             long randomNum = (long) (Math.random()*Math.pow(10,10));
