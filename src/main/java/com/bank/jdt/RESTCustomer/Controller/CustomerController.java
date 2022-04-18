@@ -29,9 +29,9 @@ public class CustomerController {
         return customerService.addCustomer(customer);
     }
 
-    @PutMapping("/update/{id}")
-    public Customer updateCustomer(@PathVariable("id") long id, @RequestBody Customer customer) {
-        return customerService.updateCustomer(id, customer);
+    @PutMapping("/update/{username}")
+    public Customer updateCustomer(@PathVariable("username") String username, @RequestBody Customer customer) {
+        return customerService.updateCustomer(username, customer);
     }
 
     @GetMapping("/get")
@@ -39,9 +39,9 @@ public class CustomerController {
         return customerService.getAllCustomer();
     }
 
-    @GetMapping("/get/{id}")
-    public Optional<Customer> getCustomer(@PathVariable("id") long id) {
-        return customerService.getCustomerById(id);
+    @GetMapping("/get/{username}")
+    public Optional<Customer> getCustomer(@PathVariable("username") String username) {
+        return customerService.getCustomerByUsername(username);
     }
 
     @DeleteMapping("/delete/{id}")
