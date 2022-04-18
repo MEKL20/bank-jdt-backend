@@ -22,7 +22,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Customer> customer = Optional.ofNullable(customerRepository.findByUsername(username));
+        Optional<Customer> customer = customerRepository.findByUsername(username);
         return customer.map(MyUserDetails::new).get();
     }
 

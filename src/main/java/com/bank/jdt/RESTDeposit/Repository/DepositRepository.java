@@ -15,6 +15,12 @@ public interface DepositRepository extends JpaRepository<Deposit, Long> {
 
     Optional<Deposit> findDepositByAccountDeposit(long accountDeposit);
 
+    Deposit getDepositByAccountDeposit(long accountDeposit);
+
+    List<Deposit> findDepositsByCustomerId(long customerId);
+
     @Query(value = "SELECT * FROM deposit WHERE expired_at < :expiredAt AND is_active = 1",nativeQuery = true)
     List<Deposit>findExpiredDeposit(@Param("expiredAt") String expiredAt);
+
+
 }

@@ -5,6 +5,7 @@ import com.bank.jdt.RESTCustomer.Repository.CustomerRepository;
 import com.bank.jdt.RESTSaving.Service.SavingService;
 import com.bank.jdt.Utils.JwtUtil;
 import lombok.SneakyThrows;
+import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,8 +48,8 @@ public class CustomerService {
     }
 
     public ResponseEntity<String> loginCustomer(String username, String password) {
-        Customer customer = customerRepository.findByUsername(username);
-        if (customer != null) {
+        Optional<Customer> customer = customerRepository.findByUsername(username);
+        if (customer.isPresent()) {
             try {
                 Authentication authentication = authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -57,9 +58,9 @@ public class CustomerService {
 
                 final String jwt = jwtUtil.generateToken(userDetails);
 
-//                JSONObject jsonObject = new JSONObject();
-//                jsonObject.put("Customer", customer);
-//                jsonObject.put("Token", jwt);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Customer", customer);
+                jsonObject.put("Token", jwt);
 
                 return new ResponseEntity<>(jwt, HttpStatus.OK);
 
@@ -77,7 +78,7 @@ public class CustomerService {
         if (customerRepository.findByIdentityCard(customer.getIdentityCard()) != null) {
             throw new Exception("Identity Card " + customer.getIdentityCard() + " has already taken");
         }
-        if (customerRepository.findByUsername(customer.getUsername()) != null) {
+        if (customerRepository.findByUsername(customer.getUsername()).isPresent()) {
             throw new Exception("Username " + customer.getUsername() + " has already taken");
         }
         if (!Pattern.compile(EMAIL_PATTERN).matcher(customer.getEmail()).matches()) {
@@ -100,11 +101,11 @@ public class CustomerService {
     }
 
     @SneakyThrows
-    public Customer updateCustomer(long id, Customer customer) {
+    public Customer updateCustomer(String username, Customer customer) {
         if (customerRepository.findByIdentityCard(customer.getIdentityCard()) != null) {
             throw new Exception("Identity Card " + customer.getIdentityCard() + " has already taken");
         }
-        if (customerRepository.findByUsername(customer.getUsername()) != null) {
+        if (customerRepository.findByUsername(customer.getUsername()).isPresent()) {
             throw new Exception("Username " + customer.getUsername() + " has already taken");
         }
         if (!Pattern.compile(EMAIL_PATTERN).matcher(customer.getEmail()).matches()) {
@@ -117,7 +118,7 @@ public class CustomerService {
             throw new Exception("You are too young");
         }
 
-        Customer existingCustomer = customerRepository.getById(id);
+        Customer existingCustomer = customerRepository.getByUsername(username);
         String encodedPassword = bCryptPasswordEncoder.encode(customer.getPassword());
         existingCustomer.setName(customer.getName());
         existingCustomer.setPassword(encodedPassword);
@@ -132,8 +133,8 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Optional<Customer> getCustomerById(long id) {
-        return customerRepository.findById(id);
+    public Optional<Customer> getCustomerByUsername(String username) {
+        return customerRepository.findByUsername(username);
     }
 
     public void deleteCustomerById(long id) {

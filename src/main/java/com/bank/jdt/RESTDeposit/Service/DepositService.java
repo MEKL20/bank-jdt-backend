@@ -1,5 +1,6 @@
 package com.bank.jdt.RESTDeposit.Service;
 
+import com.bank.jdt.RESTCustomer.Repository.CustomerRepository;
 import com.bank.jdt.RESTDeposit.Entity.Deposit;
 import com.bank.jdt.RESTDeposit.Repository.DepositRepository;
 import com.bank.jdt.RESTReporting.Service.ReportingService;
@@ -19,6 +20,7 @@ import java.util.Random;
 public class DepositService {
     private final DepositRepository depositRepository;
     private final SavingRepository savingRepository;
+    private final CustomerRepository customerRepository;
     private final ReportingService reportingService;
 
     Random random = new Random();
@@ -28,9 +30,10 @@ public class DepositService {
     Timestamp NINE_MONTH_LATER = new Timestamp(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30 * 9);
     Timestamp TWELVE_MONTH_LATER = new Timestamp(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30 * 12);
 
-    public DepositService(DepositRepository depositRepository, SavingRepository savingRepository, ReportingService reportingService) {
+    public DepositService(DepositRepository depositRepository, SavingRepository savingRepository, CustomerRepository customerRepository, ReportingService reportingService) {
         this.depositRepository = depositRepository;
         this.savingRepository = savingRepository;
+        this.customerRepository = customerRepository;
         this.reportingService = reportingService;
     }
 
@@ -82,8 +85,8 @@ public class DepositService {
     }
 
     @SneakyThrows
-    public String withdrawDeposit(long id) {
-        Deposit deposit = depositRepository.getById(id);
+    public String withdrawDeposit(long accountDeposit) {
+        Deposit deposit = depositRepository.getDepositByAccountDeposit(accountDeposit);
         Saving source = savingRepository.findByCustomerId(deposit.getCustomer().getId());
         switch (deposit.getPeriod()) {
             case 3:
@@ -118,22 +121,23 @@ public class DepositService {
                 deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), deposit.getBalance(), source.getAccountSaving());
                 depositRepository.save(deposit);
-                return "Sukses"+source.getBalance() + (deposit.getBalance() * 80 / 100);
+                return "Sukses" + source.getBalance() + (deposit.getBalance() * 80 / 100);
             default:
                 throw new Exception("Disbursement failed");
         }
     }
 
-    public Optional<Deposit> getDeposit(long id) {
-        return depositRepository.findById(id);
+    public Optional<Deposit> getDeposit(long accountDeposit) {
+        return depositRepository.findDepositByAccountDeposit(accountDeposit);
     }
 
     public List<Deposit> getDeposits() {
         return depositRepository.findAll();
     }
 
-    public Optional<Deposit> getDepositByCustomerId(long customerId) {
-        return depositRepository.findDepositByCustomerId(customerId);
+    public List<Deposit> getDepositsByUsername(String username) {
+        long customerId = customerRepository.findByUsername(username).get().getId();
+        return depositRepository.findDepositsByCustomerId(customerId);
     }
 
     public void deleteDeposit(long id) {

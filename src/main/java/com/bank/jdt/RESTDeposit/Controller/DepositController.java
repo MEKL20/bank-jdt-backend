@@ -21,14 +21,14 @@ public class DepositController {
         return depositService.addDeposit(deposit);
     }
 
-    @PutMapping("/withdraw/{id}")
-    public String withdrawDeposit(@PathVariable("id") long id) {
-        return depositService.withdrawDeposit(id);
+    @PutMapping("/withdraw/{account_deposit}")
+    public String withdrawDeposit(@PathVariable("account_deposit") long accountDeposit) {
+        return depositService.withdrawDeposit(accountDeposit);
     }
 
-    @GetMapping("/get/{id}")
-    public Optional<Deposit> getDeposit(@PathVariable("id") long id) {
-        return depositService.getDeposit(id);
+    @GetMapping("/get/{account_deposit}")
+    public Optional<Deposit> getDeposit(@PathVariable("account_deposit") long accountDeposit) {
+        return depositService.getDeposit(accountDeposit);
     }
 
     @GetMapping("/get")
@@ -36,9 +36,9 @@ public class DepositController {
         return depositService.getDeposits();
     }
 
-    @GetMapping("/getByCustomerId/{customer_id}")
-    public Optional<Deposit> getDepositByCustomerId(@PathVariable("customer_id") long customerId) {
-        return depositService.getDepositByCustomerId(customerId);
+    @GetMapping("/getByUsername/{username}")
+    public List<Deposit> getDepositsByUsername(@PathVariable("username") String username) {
+        return depositService.getDepositsByUsername(username);
     }
 
     @DeleteMapping("/delete/{id}")
