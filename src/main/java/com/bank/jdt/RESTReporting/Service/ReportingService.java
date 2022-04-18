@@ -15,14 +15,12 @@ import java.util.Optional;
 @Service
 public class ReportingService {
     private final ReportingRepository reportingRepository;
-    private final DepositRepository depositRepository;
     private final SavingRepository savingRepository;
 
     Timestamp now = new Timestamp(System.currentTimeMillis());
 
-    public ReportingService(ReportingRepository reportingRepository, DepositRepository depositRepository, SavingRepository savingRepository) {
+    public ReportingService(ReportingRepository reportingRepository, SavingRepository savingRepository) {
         this.reportingRepository = reportingRepository;
-        this.depositRepository = depositRepository;
         this.savingRepository = savingRepository;
     }
 

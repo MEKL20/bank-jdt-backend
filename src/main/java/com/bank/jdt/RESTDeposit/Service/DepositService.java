@@ -7,6 +7,9 @@ import com.bank.jdt.RESTReporting.Service.ReportingService;
 import com.bank.jdt.RESTSaving.Entity.Saving;
 import com.bank.jdt.RESTSaving.Repository.SavingRepository;
 import lombok.SneakyThrows;
+import net.minidev.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +41,7 @@ public class DepositService {
     }
 
     @SneakyThrows
-    public Deposit addDeposit(Deposit deposit) {
+    public ResponseEntity<String> addDeposit(String username, Deposit deposit) {
         long accountDeposit;
         do {
             int number = random.nextInt(999999);
@@ -61,33 +64,37 @@ public class DepositService {
                 deposit.setExpiredAt(TWELVE_MONTH_LATER);
                 break;
             default:
-                throw new Exception("WRONG PERIODE");
+                return new ResponseEntity<>("Wrong Periode", HttpStatus.BAD_REQUEST);
         }
 
         try {
             if (deposit.getBalance() < 10000) {
-                throw new Exception("Minimum Deposit 10,000");
+//                throw new Exception("Minimum Deposit 10,000");
+                return new ResponseEntity<>("Minimum Deposit 10,000", HttpStatus.BAD_REQUEST);
             }
-            Saving source = savingRepository.findByCustomerId(deposit.getCustomer().getId());
+            Saving source = savingRepository.findByUsername(username);
             source.setBalance(source.getBalance() - deposit.getBalance());
             if (source.getBalance() < 0) {
-                throw new Exception("Balance From Main Account Is Not Enough");
+//                throw new Exception("Balance From Main Account Is Not Enough");
+                return new ResponseEntity<>("Balance From Main Account Is Not Enough", HttpStatus.BAD_REQUEST);
             }
 
             savingRepository.save(source);
             reportingService.reportingDepositOut(source.getAccountSaving(), deposit.getBalance(), deposit.getAccountDeposit());
-            return depositRepository.save(deposit);
+//            return depositRepository.save(deposit);
+            return new ResponseEntity(depositRepository.save(deposit), HttpStatus.OK);
 
         } catch (Exception err) {
-            throw new Exception(err);
+            return new ResponseEntity(err, HttpStatus.BAD_REQUEST);
         }
 
     }
 
     @SneakyThrows
-    public String withdrawDeposit(long accountDeposit) {
+    public ResponseEntity<String> withdrawDeposit(long accountDeposit) {
         Deposit deposit = depositRepository.getDepositByAccountDeposit(accountDeposit);
         Saving source = savingRepository.findByCustomerId(deposit.getCustomer().getId());
+        JSONObject jsonObject = new JSONObject();
         switch (deposit.getPeriod()) {
             case 3:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 95 / 100));
@@ -95,8 +102,9 @@ public class DepositService {
                 deposit.setBalance(0);
                 deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                depositRepository.save(deposit);
-                return "Sukses";
+                jsonObject.put("Message", "Success with 5% penalty");
+                jsonObject.put("Withdraw", depositRepository.save(deposit));
+                return new ResponseEntity(jsonObject, HttpStatus.OK);
             case 6:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 90 / 100));
                 savingRepository.save(source);
@@ -104,26 +112,29 @@ public class DepositService {
                 deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
                 savingRepository.save(source);
-                depositRepository.save(deposit);
-                return "Sukses";
+                jsonObject.put("Message", "Success with 10% penalty");
+                jsonObject.put("Withdraw", depositRepository.save(deposit));
+                return new ResponseEntity(jsonObject, HttpStatus.OK);
             case 9:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 85 / 100));
                 savingRepository.save(source);
                 deposit.setBalance(0);
                 deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                depositRepository.save(deposit);
-                return "Sukses";
+                jsonObject.put("Message", "Success with 15% penalty");
+                jsonObject.put("Withdraw", depositRepository.save(deposit));
+                return new ResponseEntity(jsonObject, HttpStatus.OK);
             case 12:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 80 / 100));
                 savingRepository.save(source);
                 deposit.setBalance(0);
                 deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                depositRepository.save(deposit);
-                return "Sukses" + source.getBalance() + (deposit.getBalance() * 80 / 100);
+                jsonObject.put("Message", "Success with 20% penalty");
+                jsonObject.put("Withdraw", depositRepository.save(deposit));
+                return new ResponseEntity(jsonObject, HttpStatus.OK);
             default:
-                throw new Exception("Disbursement failed");
+                return new ResponseEntity<>("Disbursement failed", HttpStatus.BAD_REQUEST);
         }
     }
 
