@@ -2,6 +2,7 @@ package com.bank.jdt.RESTDeposit.Controller;
 
 import com.bank.jdt.RESTDeposit.Entity.Deposit;
 import com.bank.jdt.RESTDeposit.Service.DepositService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,17 +17,17 @@ public class DepositController {
         this.depositService = depositService;
     }
 
-    @PostMapping("/add")
-    public Deposit addDeposit(@RequestBody Deposit deposit) {
-        return depositService.addDeposit(deposit);
+    @PostMapping("/{username}/add")
+    public ResponseEntity<String> addDeposit(@PathVariable("username") String username, @RequestBody Deposit deposit) {
+        return depositService.addDeposit(username, deposit);
     }
 
-    @PutMapping("/withdraw/{account_deposit}")
-    public String withdrawDeposit(@PathVariable("account_deposit") long accountDeposit) {
+    @PutMapping("/{account_deposit}/withdraw")
+    public ResponseEntity<String> withdrawDeposit(@PathVariable("account_deposit") long accountDeposit) {
         return depositService.withdrawDeposit(accountDeposit);
     }
 
-    @GetMapping("/get/{account_deposit}")
+    @GetMapping("/{account_deposit}/get")
     public Optional<Deposit> getDeposit(@PathVariable("account_deposit") long accountDeposit) {
         return depositService.getDeposit(accountDeposit);
     }
@@ -36,7 +37,7 @@ public class DepositController {
         return depositService.getDeposits();
     }
 
-    @GetMapping("/getByUsername/{username}")
+    @GetMapping("/{username}/getByUsername")
     public List<Deposit> getDepositsByUsername(@PathVariable("username") String username) {
         return depositService.getDepositsByUsername(username);
     }
