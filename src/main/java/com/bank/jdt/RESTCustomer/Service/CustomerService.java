@@ -62,7 +62,7 @@ public class CustomerService {
                 jsonObject.put("Customer", customer);
                 jsonObject.put("Token", jwt);
 
-                return new ResponseEntity<>(jwt, HttpStatus.OK);
+                return new ResponseEntity(jsonObject, HttpStatus.OK);
 
             } catch (BadCredentialsException e) {
                 return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
@@ -73,22 +73,22 @@ public class CustomerService {
     }
 
     @SneakyThrows
-    public Customer addCustomer(Customer customer) {
+    public ResponseEntity<String> addCustomer(Customer customer) {
 
         if (customerRepository.findByIdentityCard(customer.getIdentityCard()) != null) {
-            throw new Exception("Identity Card " + customer.getIdentityCard() + " has already taken");
+            return new ResponseEntity<>("Identity Card " + customer.getIdentityCard() + " has already taken", HttpStatus.BAD_REQUEST);
         }
         if (customerRepository.findByUsername(customer.getUsername()).isPresent()) {
-            throw new Exception("Username " + customer.getUsername() + " has already taken");
+            return new ResponseEntity<>("Username " + customer.getUsername() + " has already taken", HttpStatus.BAD_REQUEST);
         }
         if (!Pattern.compile(EMAIL_PATTERN).matcher(customer.getEmail()).matches()) {
-            throw new Exception("Email " + customer.getEmail() + " is invalid");
+            return new ResponseEntity<>("Email " + customer.getEmail() + " is invalid", HttpStatus.BAD_REQUEST);
         }
         if (!Pattern.compile(PASSWORD_PATTERN).matcher(customer.getPassword()).matches()) {
-            throw new Exception("Password " + customer.getPassword() + " doesn't match");
+            return new ResponseEntity<>("Password " + customer.getPassword() + " doesn't match", HttpStatus.BAD_REQUEST);
         }
         if (customer.getDatebirth().after(SEVENTEEN_YEARS_AGO)) {
-            throw new Exception("You are too young");
+            return new ResponseEntity<>("You are too young", HttpStatus.BAD_REQUEST);
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(customer.getPassword());
@@ -97,25 +97,25 @@ public class CustomerService {
         customerRepository.save(customer);
         savingService.addSaving(customer);
 
-        return customer;
+        return new ResponseEntity(customer, HttpStatus.OK);
     }
 
     @SneakyThrows
-    public Customer updateCustomer(String username, Customer customer) {
+    public ResponseEntity<String> updateCustomer(String username, Customer customer) {
         if (customerRepository.findByIdentityCard(customer.getIdentityCard()) != null) {
-            throw new Exception("Identity Card " + customer.getIdentityCard() + " has already taken");
+            return new ResponseEntity<>("Identity Card " + customer.getIdentityCard() + " has already taken", HttpStatus.BAD_REQUEST);
         }
         if (customerRepository.findByUsername(customer.getUsername()).isPresent()) {
-            throw new Exception("Username " + customer.getUsername() + " has already taken");
+            return new ResponseEntity<>("Username " + customer.getUsername() + " has already taken", HttpStatus.BAD_REQUEST);
         }
         if (!Pattern.compile(EMAIL_PATTERN).matcher(customer.getEmail()).matches()) {
-            throw new Exception("Email " + customer.getEmail() + " is invalid");
+            return new ResponseEntity<>("Email " + customer.getEmail() + " is invalid", HttpStatus.BAD_REQUEST);
         }
         if (!Pattern.compile(PASSWORD_PATTERN).matcher(customer.getPassword()).matches()) {
-            throw new Exception("Password " + customer.getPassword() + " doesn't match");
+            return new ResponseEntity<>("Password " + customer.getPassword() + " doesn't match", HttpStatus.BAD_REQUEST);
         }
         if (customer.getDatebirth().after(SEVENTEEN_YEARS_AGO)) {
-            throw new Exception("You are too young");
+            return new ResponseEntity<>("You are too young", HttpStatus.BAD_REQUEST);
         }
 
         Customer existingCustomer = customerRepository.getByUsername(username);
@@ -126,7 +126,8 @@ public class CustomerService {
         existingCustomer.setAddress(customer.getAddress());
         existingCustomer.setPhone(customer.getPhone());
         existingCustomer.setDatebirth(customer.getDatebirth());
-        return customerRepository.save(existingCustomer);
+        customerRepository.save(existingCustomer);
+        return new ResponseEntity(existingCustomer, HttpStatus.OK);
     }
 
     public List<Customer> getAllCustomer() {

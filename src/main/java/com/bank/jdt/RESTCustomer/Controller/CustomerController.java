@@ -25,12 +25,12 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public Customer addCustomer(@RequestBody Customer customer) throws Exception {
+    public ResponseEntity<String> addCustomer(@RequestBody Customer customer){
         return customerService.addCustomer(customer);
     }
 
     @PutMapping("/update/{username}")
-    public Customer updateCustomer(@PathVariable("username") String username, @RequestBody Customer customer) {
+    public ResponseEntity<String> updateCustomer(@PathVariable("username") String username, @RequestBody Customer customer) {
         return customerService.updateCustomer(username, customer);
     }
 
