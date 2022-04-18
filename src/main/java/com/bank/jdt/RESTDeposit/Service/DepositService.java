@@ -85,18 +85,20 @@ public class DepositService {
     public String withdrawDeposit(long id) {
         Deposit deposit = depositRepository.getById(id);
         Saving source = savingRepository.findByCustomerId(deposit.getCustomer().getId());
-        deposit.setBalance(0);
-        deposit.setActive(false);
         switch (deposit.getPeriod()) {
             case 3:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 95 / 100));
                 savingRepository.save(source);
+                deposit.setBalance(0);
+                deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), deposit.getBalance(), source.getAccountSaving());
                 depositRepository.save(deposit);
                 return "Sukses";
             case 6:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 90 / 100));
                 savingRepository.save(source);
+                deposit.setBalance(0);
+                deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), deposit.getBalance(), source.getAccountSaving());
                 savingRepository.save(source);
                 depositRepository.save(deposit);
@@ -104,15 +106,19 @@ public class DepositService {
             case 9:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 85 / 100));
                 savingRepository.save(source);
+                deposit.setBalance(0);
+                deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), deposit.getBalance(), source.getAccountSaving());
                 depositRepository.save(deposit);
                 return "Sukses";
             case 12:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 80 / 100));
                 savingRepository.save(source);
+                deposit.setBalance(0);
+                deposit.setActive(false);
                 reportingService.reportingDepositIn(deposit.getAccountDeposit(), deposit.getBalance(), source.getAccountSaving());
                 depositRepository.save(deposit);
-                return "Sukses";
+                return "Sukses"+source.getBalance() + (deposit.getBalance() * 80 / 100);
             default:
                 throw new Exception("Disbursement failed");
         }
@@ -141,31 +147,37 @@ public class DepositService {
         List<Deposit> expiredDeposit = depositRepository.findExpiredDeposit(sdf.format(now));
         for (Deposit newDeposit : expiredDeposit) {
             Saving source = savingRepository.findByCustomerId(newDeposit.getCustomer().getId());
-            newDeposit.setActive(false);
-            newDeposit.setBalance(0);
             switch (newDeposit.getPeriod()) {
                 case 3:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 105 / 100));
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     savingRepository.save(source);
+                    newDeposit.setActive(false);
+                    newDeposit.setBalance(0);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     depositRepository.save(newDeposit);
                     break;
                 case 6:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 1010 / 100));
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     savingRepository.save(source);
+                    newDeposit.setActive(false);
+                    newDeposit.setBalance(0);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     depositRepository.save(newDeposit);
                     break;
                 case 9:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 115 / 100));
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     savingRepository.save(source);
+                    newDeposit.setActive(false);
+                    newDeposit.setBalance(0);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     depositRepository.save(newDeposit);
                     break;
                 case 12:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 120 / 100));
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     savingRepository.save(source);
+                    newDeposit.setActive(false);
+                    newDeposit.setBalance(0);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), newDeposit.getBalance(), source.getAccountSaving());
                     depositRepository.save(newDeposit);
                     break;
                 default:
