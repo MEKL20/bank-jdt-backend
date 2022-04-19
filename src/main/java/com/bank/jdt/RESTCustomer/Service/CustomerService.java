@@ -59,7 +59,7 @@ public class CustomerService {
                 final String jwt = jwtUtil.generateToken(userDetails);
 
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("Customer", customer);
+                jsonObject.put("Username", customer.get().getUsername());
                 jsonObject.put("Token", jwt);
 
                 return new ResponseEntity(jsonObject, HttpStatus.OK);
