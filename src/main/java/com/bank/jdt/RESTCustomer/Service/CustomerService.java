@@ -47,7 +47,7 @@ public class CustomerService {
         this.savingService = savingService;
     }
 
-    public ResponseEntity loginCustomer(String username, String password) {
+    public ResponseEntity<String> loginCustomer(String username, String password) {
         Optional<Customer> customer = customerRepository.findByUsername(username);
         if (customer.isPresent()) {
             try {
@@ -62,13 +62,13 @@ public class CustomerService {
                 jsonObject.put("Username", customer.get().getUsername());
                 jsonObject.put("Token", jwt);
 
-                return new ResponseEntity(jsonObject, HttpStatus.OK);
+                return new ResponseEntity<>(jsonObject, HttpStatus.OK);
 
             } catch (BadCredentialsException e) {
-                return new ResponseEntity("Wrong password", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity("User not found", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
     }
 
