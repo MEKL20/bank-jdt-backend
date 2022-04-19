@@ -62,7 +62,7 @@ public class CustomerService {
                 jsonObject.put("Username", customer.get().getUsername());
                 jsonObject.put("Token", jwt);
 
-                return new ResponseEntity<>(jsonObject, HttpStatus.OK);
+                return new ResponseEntity(jsonObject, HttpStatus.OK);
 
             } catch (BadCredentialsException e) {
                 return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
