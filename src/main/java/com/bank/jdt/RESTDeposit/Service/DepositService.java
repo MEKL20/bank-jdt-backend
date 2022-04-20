@@ -1,5 +1,6 @@
 package com.bank.jdt.RESTDeposit.Service;
 
+import com.bank.jdt.RESTCustomer.Entity.Customer;
 import com.bank.jdt.RESTCustomer.Repository.CustomerRepository;
 import com.bank.jdt.RESTDeposit.Entity.Deposit;
 import com.bank.jdt.RESTDeposit.Repository.DepositRepository;
@@ -48,6 +49,8 @@ public class DepositService {
             accountDeposit = Long.parseLong(123 + String.format("%06d", number));
         } while (depositRepository.findDepositByAccountDeposit(accountDeposit).isPresent());
 
+        Customer customer = customerRepository.getByUsername(username);
+        deposit.setCustomer(customer);
         deposit.setAccountDeposit(accountDeposit);
         deposit.setCreatedAt(now);
         switch (deposit.getPeriod()) {
@@ -99,39 +102,30 @@ public class DepositService {
             case 3:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 95 / 100));
                 savingRepository.save(source);
-                deposit.setBalance(0);
-                deposit.setActive(false);
-                reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
+                reportingService.reportingDepositIn(deposit.getAccountDeposit(), (deposit.getBalance() * 95 / 100), source.getAccountSaving());
+                depositRepository.deleteById(deposit.getId());
                 jsonObject.put("Message", "Success with 5% penalty");
-                jsonObject.put("Withdraw", depositRepository.save(deposit));
                 return new ResponseEntity(jsonObject, HttpStatus.OK);
             case 6:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 90 / 100));
                 savingRepository.save(source);
-                deposit.setBalance(0);
-                deposit.setActive(false);
-                reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                savingRepository.save(source);
+                reportingService.reportingDepositIn(deposit.getAccountDeposit(), (deposit.getBalance() * 90 / 100), source.getAccountSaving());
+                depositRepository.deleteById(deposit.getId());
                 jsonObject.put("Message", "Success with 10% penalty");
-                jsonObject.put("Withdraw", depositRepository.save(deposit));
                 return new ResponseEntity(jsonObject, HttpStatus.OK);
             case 9:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 85 / 100));
                 savingRepository.save(source);
-                deposit.setBalance(0);
-                deposit.setActive(false);
-                reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
+                reportingService.reportingDepositIn(deposit.getAccountDeposit(), (deposit.getBalance() * 85 / 100), source.getAccountSaving());
+                depositRepository.deleteById(deposit.getId());
                 jsonObject.put("Message", "Success with 15% penalty");
-                jsonObject.put("Withdraw", depositRepository.save(deposit));
                 return new ResponseEntity(jsonObject, HttpStatus.OK);
             case 12:
                 source.setBalance(source.getBalance() + (deposit.getBalance() * 80 / 100));
                 savingRepository.save(source);
-                deposit.setBalance(0);
-                deposit.setActive(false);
-                reportingService.reportingDepositIn(deposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
+                reportingService.reportingDepositIn(deposit.getAccountDeposit(), (deposit.getBalance() * 80 / 100), source.getAccountSaving());
+                depositRepository.deleteById(deposit.getId());
                 jsonObject.put("Message", "Success with 20% penalty");
-                jsonObject.put("Withdraw", depositRepository.save(deposit));
                 return new ResponseEntity(jsonObject, HttpStatus.OK);
             default:
                 return new ResponseEntity<>("Disbursement failed", HttpStatus.BAD_REQUEST);
@@ -156,7 +150,7 @@ public class DepositService {
     }
 
     //    Expired Checker Engine
-    @Scheduled(cron = "0 * * ? * *")
+    @Scheduled(cron = "* * * ? * *")
     public void depositExpirationChecker() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Deposit> expiredDeposit = depositRepository.findExpiredDeposit(sdf.format(now));
@@ -166,34 +160,26 @@ public class DepositService {
                 case 3:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 105 / 100));
                     savingRepository.save(source);
-                    newDeposit.setActive(false);
-                    newDeposit.setBalance(0);
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                    depositRepository.save(newDeposit);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), (newDeposit.getBalance() * 105 / 100), source.getAccountSaving());
+                    depositRepository.deleteById(newDeposit.getId());
                     break;
                 case 6:
-                    source.setBalance(source.getBalance() + (newDeposit.getBalance() * 1010 / 100));
+                    source.setBalance(source.getBalance() + (newDeposit.getBalance() * 110 / 100));
                     savingRepository.save(source);
-                    newDeposit.setActive(false);
-                    newDeposit.setBalance(0);
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                    depositRepository.save(newDeposit);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), (newDeposit.getBalance() * 110 / 100), source.getAccountSaving());
+                    depositRepository.deleteById(newDeposit.getId());
                     break;
                 case 9:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 115 / 100));
                     savingRepository.save(source);
-                    newDeposit.setActive(false);
-                    newDeposit.setBalance(0);
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                    depositRepository.save(newDeposit);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), (newDeposit.getBalance() * 115 / 100), source.getAccountSaving());
+                    depositRepository.deleteById(newDeposit.getId());
                     break;
                 case 12:
                     source.setBalance(source.getBalance() + (newDeposit.getBalance() * 120 / 100));
                     savingRepository.save(source);
-                    newDeposit.setActive(false);
-                    newDeposit.setBalance(0);
-                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), source.getBalance(), source.getAccountSaving());
-                    depositRepository.save(newDeposit);
+                    reportingService.reportingDepositIn(newDeposit.getAccountDeposit(), (newDeposit.getBalance() * 120 / 100), source.getAccountSaving());
+                    depositRepository.deleteById(newDeposit.getId());
                     break;
                 default:
                     System.out.println("Disbursement failed");
